@@ -1,0 +1,53 @@
+---
+- hosts: all
+  become: True
+  gather_facts: no
+
+  tasks:
+  - name: Copy Django project to hosts.
+    unarchive:
+      src=../django-hitcount.tar.gz
+      dest=/var/www/
+  - name: create static_root dir
+    file: path={{ static_dir }} state=directory mode=0755
+          owner=ubuntu
+  - name: Install virtualenv using pip
+    pip: 
+         name=virtualenv
+         executable=pip3
+  - name: install python requirements
+    pip: requirements={{ django_dir }}/requirements.txt 
+         virtualenv={{ home_dir }}/django-hitcount
+         virtualenv_python=python3.8
+        
+- hosts: all
+  gather_facts: no
+  tasks:
+  - name: Django settings file.
+    template: src=../config/django.settings.py.tpml dest={{ django_dir }}/example_project/settings.py
+  - name: Django collect static
+    community.general.django_manage: command=collectstatic 
+                                     app_path={{ django_dir }}
+                                     virtualenv=/var/www/django-hitcount
+  - name: Django migrate
+    run_once: true
+    community.general.django_manage: command=migrate 
+                                     app_path={{ django_dir }}
+                                     virtualenv=/var/www/django-hitcount  
+
+- hosts: all
+  become: True
+  gather_facts: no
+  tasks:
+  - name: Set group on files
+    file: path={{ home_dir }}/django-hitcount group=www-data state=directory recurse=yes
+  - name: Set perms on directories
+    shell: find {{ home_dir }}/django-hitcount -type d -exec chmod 755 {} \;
+  - name: Set perms on files
+    shell: find {{ home_dir }}/django-hitcount -type f -exec chmod 644 {} \;
+#  - name: Set write perms to dir for db
+#    file: path={{ home_dir }}/django-hitcount mode=g+w
+#  - name: Set write perms to dir for db
+#    file: path={{ home_dir }}/django-hitcount/example_project mode=g+w
+
+

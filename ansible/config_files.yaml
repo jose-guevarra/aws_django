@@ -1,0 +1,25 @@
+---
+- name: Copy configuration files
+  hosts: all
+  become: True
+  gather_facts: no
+
+  tasks:
+    - name: nginx config file
+      template: src=../config/django.conf dest=/etc/nginx/sites-available/django.conf
+      register: nginx_config
+    - name: nginx main config file
+      template: src=../config/nginx.conf dest=/etc/nginx/nginx.conf
+    - name: nginx config file symlink
+      file:
+        src=/etc/nginx/sites-available/django.conf
+        dest=/etc/nginx/sites-enabled/django.conf
+        state=link
+    - name: nginx restart
+      service: name=nginx state=restarted
+    - name: uwsgi config file
+      template: src=../config/example_project.ini dest=/etc/uwsgi/apps-enabled/example_project.ini
+      register: uwsgi_config
+    - name: uwsgi restart
+      service: name=uwsgi state=restarted
+

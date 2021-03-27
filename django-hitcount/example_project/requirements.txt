@@ -1,0 +1,5 @@
+Django==2.2.13
+django-etc>=1.2.0
+pytz==2018.3
+gunicorn==20.0.4
+mysqlclient==2.0.3
