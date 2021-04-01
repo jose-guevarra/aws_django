@@ -1,10 +1,4 @@
 
-/*
-@todo - ebs volume size. uses 8gb by default. 4 min?
-@todo - vault for creds?
-
-*/
-
 terraform {
   required_providers {
     aws = {
@@ -27,6 +21,11 @@ resource "aws_launch_configuration" "alconf" {
   security_groups        = [aws_security_group.instance.id]
   user_data              = file("user_data.sh")
 
+  root_block_device {
+      volume_size = "8"
+      volume_type = "gp2"
+      delete_on_termination = true
+    }
 
   lifecycle {
     create_before_destroy = true
@@ -89,7 +88,6 @@ resource "aws_lb_cookie_stickiness_policy" "elb-stickiness" {
   lb_port                  = 80
   cookie_expiration_period = 30
 }
-
 
 
 
