@@ -5,6 +5,8 @@
 
 These Terraform scripts will deploy a AWS load balancer, autoscale group, and EC2 Instance to host our Django application. Then the Ansible playbooks will deploy the Django application. 
 
+![Infrastructure Diagram.](https://github.com/jose-guevarra/aws_django/blob/master/files/ELB%20Project.png)
+
 Note: Instead of writing my own hit count application, I will be using the following Django app:
 https://github.com/thornomad/django-hitcount
 
