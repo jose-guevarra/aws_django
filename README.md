@@ -20,7 +20,12 @@ https://github.com/thornomad/django-hitcount
 
 ## Use Terraform to deploy our Load Balancer, ASG, and EC2 Instance
 
-1) Set the "ami_key_pair_name" in the tf/variables.tf file.
+1) Create tf/secret.tfvars file and set AWS SSH key pair name like so:
+
+db_username = "django"
+db_password = "foobarbaz"
+ami_key_pair_name = "my-ssh-key1"
+aws_region = "us-west-1"
 
 2) Deploy via Terraform.
 > terraform init
